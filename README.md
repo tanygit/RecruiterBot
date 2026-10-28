@@ -20,10 +20,13 @@ Recruiter Bot is a Flask backend that ranks candidates against job openings usin
 
 ## Setup and Installation
 
-Open Windows PowerShell in the project root and run:
+Open Terminal in the project root and run:
 
 ```powershell
-py -m venv .venv
+git clone https://github.com/tanygit/RecruiterBot.git
+cd RecruiterBot
+
+python -m venv .venv
 .venv\Scripts\Activate
 python -m pip install -r requirements.txt
 python -m scripts.seed
@@ -90,11 +93,52 @@ Skills receive 70% of the weight, while experience receives 30%. This prioritize
 
 The final score is a ranking heuristic, not a probability of hiring success. Availability and culture overlap are included in explanations but do not affect the numerical score. Results are sorted by score, with candidate name or job title used to break ties.
 
+## Matching Algorithm Example
+
+Consider a job with these requirements:
+
+- **Required skills:** Python, SQL, Flask, Machine Learning
+- **Minimum experience:** 3 years
+
+A candidate has the following profile:
+
+- **Skills:** Python, SQL, Machine Learning
+- **Experience:** 2 years
+- **Traits:** Analytical
+- **Availability:** Immediate
+
+### 1. Skill Score
+
+The candidate matches 3 of the 4 required skills. Flask is missing.
+
+`Skill Score = (Matched Skills / Total Required Skills) × 100`
+
+`Skill Score = (3 / 4) × 100 = 75.00`
+
+### 2. Experience Score
+
+The candidate has 2 years of experience, compared with the required 3 years.
+
+`Experience Score = min(100, (Candidate Experience / Minimum Experience) × 100)`
+
+`Experience Score = min(100, (2 / 3) × 100) = 66.67`
+
+### 3. Final Matching Score
+
+Skills contribute 70% of the final score, while experience contributes 30%.
+
+`Final Score = (0.70 × Skill Score) + (0.30 × Experience Score)`
+
+`Final Score = (0.70 × 75.00) + (0.30 × 66.67)`
+
+`Final Score = 52.50 + 20.00 = 72.50`
+
+
 ## Database Design and Trade-offs
 
 The application uses SQLite with separate tables for candidates and jobs. Skills, traits, and keywords are stored as comma-separated values to keep the supplied sample dataset simple.
 
-Database operations use handwritten SQL through Python's `sqlite3` module, providing direct control over queries without an ORM or query builder.
+Database operations use SQL through Python's `sqlite3` module, providing direct control over queries without an ORM or query builder.
 
 Matches are calculated when requested instead of being stored in the database. This avoids retaining stale match scores when candidate or job information changes.
 
