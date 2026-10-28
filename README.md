@@ -1,15 +1,14 @@
-
 # Recruiter Bot
 
-The application ranks candidates against job openings using an explainable matching algorithm.
+Recruiter Bot is a Flask backend that ranks candidates against job openings using an explainable matching algorithm. It uses a SQLite database to retrieve candidate and job data.
 
 ## Features
 
-- Loads the 15 supplied candidates and six jobs.
+- Loads the 15 supplied candidates and six jobs using a seed script.
 - Ranks candidates for a selected job.
 - Ranks jobs for a selected candidate.
-- Returns scores, matched skills, missing skills, and explanations.
-- Uses handwritten SQL through Python's sqlite3 module.
+- Returns match scores, matched skills, missing skills, and explanations.
+- Uses handwritten SQL through Python's `sqlite3` module, without an ORM or query builder.
 - Includes the SQL Detective Challenge and automated tests.
 
 ## Technology Stack
@@ -19,64 +18,102 @@ The application ranks candidates against job openings using an explainable match
 - SQLite
 - pytest
 
-## Setup
+## Setup and Installation
 
-Python 3.10 or newer is recommended.
-
-On Windows PowerShell:
+Open Windows PowerShell in the project root and run:
 
 ```powershell
-python -m venv .venv
+py -m venv .venv
 .venv\Scripts\Activate
 python -m pip install -r requirements.txt
 python -m scripts.seed
 python run.py
 ```
 
-The server runs at http://127.0.0.1:5000.
+The server runs at:
+
+http://127.0.0.1:5000
+
+Keep the terminal running while making API requests.
 
 ## API Endpoints
 
 | Method | Endpoint | Purpose |
 |---|---|---|
-| GET | /health | Health check |
-| GET | /candidates | List candidates |
-| GET | /jobs | List jobs |
-| GET | /candidates/1/matches | Rank jobs for candidate 1 |
-| GET | /jobs/1/matches | Rank candidates for job 1 |
+| GET | `/health` | Check API health |
+| GET | `/candidates` | List candidates |
+| GET | `/jobs` | List job openings |
+| GET | `/jobs/1/matches` | Rank candidates for job ID 1 |
+| GET | `/candidates/1/matches` | Rank jobs for candidate ID 1 |
+
+The ID `1` in the matching examples is illustrative; other valid IDs can be used.
 
 Unknown candidate or job IDs return HTTP 404.
 
+### Example API Requests
+
+Run these commands in a second PowerShell terminal while the server is running:
+
+```powershell
+curl.exe http://127.0.0.1:5000/health
+curl.exe http://127.0.0.1:5000/candidates
+curl.exe http://127.0.0.1:5000/jobs
+curl.exe http://127.0.0.1:5000/jobs/1/matches
+curl.exe http://127.0.0.1:5000/candidates/1/matches
+```
+
 ## Matching Algorithm
 
-Skill score is the percentage of required skills possessed by the candidate.
+The matching algorithm considers skill overlap and experience fit.
 
-Experience score is the candidate's experience divided by the job's minimum experience, capped at 100. If minimum experience is zero, the experience score is 100.
+**1. Skill score**
 
-Final score:
+The percentage of required job skills possessed by the candidate:
 
-Final Score = 0.70 × Skill Score + 0.30 × Experience Score
+`Skill Score = (Matched Required Skills / Total Required Skills) × 100`
 
-The scores are ranking heuristics, not probabilities of hiring success. Results are sorted by score, with candidate name or job title used to break ties.
+If a job has no required skills, the skill score is 100.
 
-Availability and culture overlap are included in explanations but do not affect the numerical score.
+**2. Experience score**
 
-## Database Design
+The candidate's experience relative to the job's minimum experience, capped at 100:
 
-The database contains candidates and jobs tables. Skills and keywords are stored as comma-separated values to keep the fixed sample dataset simple.
+`Experience Score = min(100, Candidate Experience / Minimum Experience × 100)`
 
-Matches are calculated when requested rather than stored, so scores do not become stale when profile data changes.
+If the minimum experience is zero, the experience score is 100.
+
+**3. Final score**
+
+`Final Score = (0.70 × Skill Score) + (0.30 × Experience Score)`
+
+Skills receive 70% of the weight, while experience receives 30%. This prioritizes relevant skills while still accounting for experience.
+
+The final score is a ranking heuristic, not a probability of hiring success. Availability and culture overlap are included in explanations but do not affect the numerical score. Results are sorted by score, with candidate name or job title used to break ties.
+
+## Database Design and Trade-offs
+
+The application uses SQLite with separate tables for candidates and jobs. Skills, traits, and keywords are stored as comma-separated values to keep the supplied sample dataset simple.
+
+Database operations use handwritten SQL through Python's `sqlite3` module, providing direct control over queries without an ORM or query builder.
+
+Matches are calculated when requested instead of being stored in the database. This avoids retaining stale match scores when candidate or job information changes.
+
+The scoring weights are configurable design choices and could be refined using recruiter feedback or evaluation data. For a larger application, skills and keywords could be normalized into separate relational tables.
 
 ## SQL Detective Challenge
 
-The file sql_detective.sql contains queries for all five questions.
+The `sql_detective.sql` file contains queries for all five questions in the assignment, including the bonus window-function question.
 
-Question 3 infers job associations from interview records because the supplied schema does not contain a separate application-to-job table. Email addresses are normalized to handle capitalization differences.
+The SQL challenge uses the separate hiring-operations schema supplied in the assignment and is independent of the application's SQLite database.
+
+For Question 3, job associations are inferred from interview records because the supplied schema does not contain a separate application-to-job table. Email addresses are normalized to handle capitalization differences in duplicate applicant records.
 
 ## Tests
 
-Run:
+Run the automated tests from the project root:
 
 ```powershell
 python -m pytest -q
 ```
+
+The tests cover API endpoints and matching-algorithm behavior.
