@@ -26,8 +26,8 @@ Python 3.10 or newer is recommended.
 On Windows PowerShell:
 
 ```powershell
-py -m venv .venv
-.\.venv\Scripts\Activate.ps1
+python -m venv .venv
+.venv\Scripts\Activate
 python -m pip install -r requirements.txt
 python -m scripts.seed
 python run.py
