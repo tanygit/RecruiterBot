@@ -156,7 +156,7 @@ The SQL challenge uses the separate hiring-operations schema supplied in the ass
 
 2. **Final-Stage Applicants:** Count the distinct applicants who reached the Final interview stage for each job posting.
 
-3. **Applicants Across Multiple Jobs:** Identify people associated with more than one job posting. Email addresses are normalized to handle capitalization differences in duplicate applicant records. Since the supplied schema has no separate applications table, interview records are used to infer job associations.
+3. **Applicants Across Multiple Jobs:** Identify people associated with more than one job posting. Email addresses are normalized to handle capitalization differences in duplicate applicant records.
 
 4. **Recruiter Conversion Rate:** Calculate each recruiter's Final-stage conversion rate as passed interviews divided by total Final-stage interviews. Only recruiters with at least three Final-stage interviews are included.
 
