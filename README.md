@@ -175,4 +175,4 @@ The tests cover API endpoints and matching-algorithm behavior.
 
 ## AI Tools
 
-I used ChatGPT as a development assistant to clarify assignment requirements, debug errors, review the matching algorithm. I also used it to understand SQL query logic and resolve issues encountered.
+I used ChatGPT as a development assistant to clarify assignment requirements, debug errors, review the matching algorithm.
