@@ -1,6 +1,6 @@
 # Recruiter Bot
 
-Recruiter Bot is a Flask backend that ranks candidates against job openings using an explainable matching algorithm. It uses a SQLite database to retrieve candidate and job data.
+Recruiter Bot is a Flask backend that ranks candidates against job openings using an matching algorithm. It uses a SQLite database to retrieve candidate and job data.
 
 ## Features
 
@@ -8,7 +8,7 @@ Recruiter Bot is a Flask backend that ranks candidates against job openings usin
 - Ranks candidates for a selected job.
 - Ranks jobs for a selected candidate.
 - Returns match scores, matched skills, missing skills, and explanations.
-- Uses handwritten SQL through Python's `sqlite3` module, without an ORM or query builder.
+- Uses SQL through Python's `sqlite3` module, without an ORM or query builder.
 - Includes the SQL Detective Challenge and automated tests.
 
 ## Technology Stack
