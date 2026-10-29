@@ -27,7 +27,7 @@ git clone https://github.com/tanygit/RecruiterBot.git
 cd RecruiterBot
 
 python -m venv .venv
-.venv\Scripts\Activate
+.venv\Scripts\activate
 python -m pip install -r requirements.txt
 python -m scripts.seed
 python run.py
@@ -146,11 +146,22 @@ The scoring weights are configurable design choices and could be refined using r
 
 ## SQL Detective Challenge
 
-The `sql_detective.sql` file contains queries for all five questions in the assignment, including the bonus window-function question.
+The `sql_detective.sql` file contains queries for all five questions in the assignment.
 
 The SQL challenge uses the separate hiring-operations schema supplied in the assignment and is independent of the application's SQLite database.
 
-For Question 3, job associations are inferred from interview records because the supplied schema does not contain a separate application-to-job table. Email addresses are normalized to handle capitalization differences in duplicate applicant records.
+### Questions Covered
+
+1. **Open Job Postings:** List all currently open job postings along with the names of their recruiters.
+
+2. **Final-Stage Applicants:** Count the distinct applicants who reached the Final interview stage for each job posting.
+
+3. **Applicants Across Multiple Jobs:** Identify people associated with more than one job posting. Email addresses are normalized to handle capitalization differences in duplicate applicant records. Since the supplied schema has no separate applications table, interview records are used to infer job associations.
+
+4. **Recruiter Conversion Rate:** Calculate each recruiter's Final-stage conversion rate as passed interviews divided by total Final-stage interviews. Only recruiters with at least three Final-stage interviews are included.
+
+5. **Successful Placements by Department (Bonus):** Use a window function to rank recruiters by successful Final-stage placements within each department and return the top-ranked recruiter or recruiters.
+
 
 ## Tests
 
